@@ -1,15 +1,17 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import mysql from 'mysql';
-import { promisify } from 'util';
 
-type PromiseConnection = {
-	query: <T>(query: string) => Promise<T>;
+type DatabaseContextType = {
+	sql?: mysql.Connection;
+	tables: string[];
 };
 
-const DatabaseContext = createContext<PromiseConnection | undefined>(undefined);
+const DatabaseContext = createContext<DatabaseContextType>({ tables: [] });
 
 export const useDatabaseProvider = () => {
-	const [callbacks, setCallbacks] = useState<PromiseConnection>();
+	const [callbacks, setCallbacks] = useState<DatabaseContextType>({
+		tables: [],
+	});
 	useEffect(() => {
 		const sql = mysql.createConnection({
 			host: '127.0.0.1',
@@ -19,18 +21,18 @@ export const useDatabaseProvider = () => {
 		});
 		sql.connect((err) => {
 			if (err) {
-				console.log('Connection failed.', err.code, err.fatal);
+				console.log('[WOWDB] Connection failed.', err.code, err.fatal);
 				return;
 			}
-			console.log('Connection opened.');
-			setCallbacks({
-				query: promisify(sql.query).bind(sql) as any,
+			console.log('[WOWDB] Connection opened.');
+			sql.query('SHOW tables', (_, result: { Tables_in_mangos: string }[]) => {
+				setCallbacks({ sql, tables: result.map((r) => r.Tables_in_mangos) });
 			});
 		});
 
 		return () => {
 			sql.end(() => {
-				console.log('Connection closed.');
+				console.log('[WOWDB] Connection closed.');
 			});
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps

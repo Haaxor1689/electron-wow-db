@@ -1,19 +1,22 @@
 import React from 'react';
-import { Global, css, Theme } from '@emotion/react';
+import { Global, css } from '@emotion/react';
 
 const GlobalStyles = () => (
 	<Global
-		styles={(theme: Theme) => css`
+		styles={(theme) => css`
 			body {
 				margin: 0;
-				font-family: Roboto, sans-serif;
+				font-family: Calibri, sans-serif;
 				-webkit-font-smoothing: antialiased;
 				-moz-osx-font-smoothing: grayscale;
 				color: ${theme.colors.text};
 			}
 
 			* {
-				font-family: Roboto, sans-serif;
+				font-family: Calibri, sans-serif;
+				font-size: ${theme.fontSizes.md}px;
+
+				border: 0 solid ${theme.colors.border};
 			}
 
 			p {

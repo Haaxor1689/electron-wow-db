@@ -22,6 +22,7 @@ module.exports = {
 		'no-nested-ternary': 'error',
 		'promise/always-return': 'off',
 		'react/no-array-index-key': 'off',
+		'react/jsx-props-no-spreading': 'off',
 	},
 	plugins: ['@typescript-eslint', 'react', 'react-hooks'],
 	settings: {
