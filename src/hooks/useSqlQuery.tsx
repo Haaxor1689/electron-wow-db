@@ -13,6 +13,7 @@ export const useSelectQuery = <T extends unknown>(query: string) => {
 		query,
 		() =>
 			new Promise((resolve, reject) => {
+				console.log('[WOWDB] Query:', query);
 				sql?.query(query, (err, result, fields) => {
 					if (err) {
 						reject(err);

@@ -1,19 +1,36 @@
 import { Form, Formik } from 'formik';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import Button from '../components/Button';
 import SelectInput from '../components/form/SelectInput';
 import TextInput from '../components/form/TextInput';
 import { Flex } from '../components/Styled';
 import Table from '../components/Table';
 import Text from '../components/Text';
+import TextButton from '../components/TextButton';
 import useDatabase from '../hooks/useDatabase';
 import { useSelectQuery } from '../hooks/useSqlQuery';
-import { DB } from '../typings';
+import { DB, SQL } from '../typings';
 
 const Home: FC = () => {
-	const [query, setQuery] = useState('');
-	const response = useSelectQuery<DB.Conditions>(query);
+	const [query, setQuery] = useState<string>();
+
+	const [sorting, setSorting] = useState<SQL.OrderBy>();
+
+	const [pageSize, setPageSize] = useState(50);
+	const [page, setPage] = useState(0);
+
+	const response = useSelectQuery<DB.Conditions>(
+		query
+			? `${
+					query + (sorting ? ` ORDER BY ${sorting[0]} ${sorting[1]}` : '')
+			  } LIMIT ${pageSize} OFFSET ${pageSize * page}`
+			: ''
+	);
 	const { tables } = useDatabase();
+
+	useEffect(() => setPage(0), [pageSize, query]);
+	useEffect(() => setSorting(undefined), [query]);
 
 	return (
 		<Flex
@@ -26,9 +43,9 @@ const Home: FC = () => {
 				initialValues={{ table: '', where: '' }}
 				onSubmit={async (values) => {
 					setQuery(
-						`SELECT * FROM \`${values.table}\` ${
-							values.where ? `WHERE ${values.where} ` : ''
-						}LIMIT 100`
+						`SELECT * FROM \`${values.table}\`${
+							values.where ? ` WHERE ${values.where}` : ''
+						}`
 					);
 				}}
 			>
@@ -46,10 +63,41 @@ const Home: FC = () => {
 						<Button type="submit" my="3" variant="primary">
 							Evaluate
 						</Button>
+						{response.data && (
+							<>
+								<Flex alignItems="baseline">
+									<Text as="span" mr={2}>
+										Page size:
+									</Text>
+									{[25, 50, 75, 100].map((p) => (
+										<TextButton
+											key={p}
+											selected={p === pageSize}
+											onClick={() => setPageSize(p)}
+										>
+											{p}
+										</TextButton>
+									))}
+								</Flex>
+								<Flex alignItems="baseline">
+									<TextButton
+										onClick={() => setPage((p) => Math.max(p - 1, 0))}
+									>
+										<FaAngleDoubleLeft />
+									</TextButton>
+									<Text as="span" mx={2}>
+										Page {page}
+									</Text>
+									<TextButton onClick={() => setPage((p) => p + 1)}>
+										<FaAngleDoubleRight />
+									</TextButton>
+								</Flex>
+							</>
+						)}
 					</Flex>
 				</Form>
 			</Formik>
-			<Table data={response.data} />
+			<Table data={response.data} sorting={sorting} setSorting={setSorting} />
 		</Flex>
 	);
 };

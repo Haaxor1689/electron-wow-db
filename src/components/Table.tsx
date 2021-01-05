@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
-import { FC, Fragment, useMemo, useState } from 'react';
+import { FC, Fragment, useState } from 'react';
 import { FaKey, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { SelectResponse } from '../hooks/useSqlQuery';
 import { SQL } from '../typings';
@@ -8,37 +8,14 @@ import Chip from './Chip';
 import { Box, Flex } from './Styled';
 import Text from './Text';
 
-type Sorting = [string, 'ASC' | 'DESC'];
-
-const compare = <T extends unknown>(lhs: T, rhs: T) => {
-	if (typeof lhs === 'string' && typeof rhs === 'string') {
-		return lhs.localeCompare(rhs);
-	}
-	if (typeof lhs === 'number' && typeof rhs === 'number') {
-		return lhs > rhs ? 1 : lhs < rhs ? -1 : 0;
-	}
-	return 0;
-};
-
 type Props = {
 	data?: SelectResponse<Record<string, unknown>>;
+	sorting?: SQL.OrderBy;
+	setSorting: (sorting?: SQL.OrderBy) => void;
 };
 
-const Table: FC<Props> = ({ data }) => {
+const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 	const [hiddenFields, setHiddenFields] = useState<Record<number, boolean>>({});
-	const [sorting, setSorting] = useState<Sorting>();
-
-	const sortedResults = useMemo(
-		() =>
-			sorting
-				? [...(data?.result ?? [])].sort((lhs, rhs) =>
-						sorting[1] === 'ASC'
-							? compare(lhs[sorting[0]], rhs[sorting[0]])
-							: compare(rhs[sorting[0]], lhs[sorting[0]])
-				  )
-				: data?.result ?? [],
-		[data?.result, sorting]
-	);
 
 	if (!data) {
 		return (
@@ -151,7 +128,7 @@ const Table: FC<Props> = ({ data }) => {
 						</tr>
 					</thead>
 					<tbody>
-						{sortedResults.map((r, ri) => (
+						{data.result.map((r, ri) => (
 							<tr
 								key={ri}
 								css={(theme) => css`
