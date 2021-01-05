@@ -10,6 +10,7 @@ const GlobalStyles = () => (
 				-webkit-font-smoothing: antialiased;
 				-moz-osx-font-smoothing: grayscale;
 				color: ${theme.colors.text};
+				background-color: ${theme.colors.bg};
 			}
 
 			* {

@@ -26,7 +26,7 @@ const theme = {
 	breakpoints: ['40em', '52em', '64em', '76em'],
 	fontSizes: { sm: 12, md: 16, lg: 20, xl: 24 },
 	space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
-	borderRagius: '4px',
+	borderRadius: '4px',
 };
 
 type ThemeType = typeof theme;

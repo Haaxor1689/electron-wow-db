@@ -15,7 +15,7 @@ export default function App() {
 		<QueryClientProvider client={queryClient}>
 			<ThemeProvider>
 				<DatabaseContextProvider value={value}>
-					<Flex as="main" height="100vh" flexDirection="column" mx={4}>
+					<Flex as="main" height="100vh" flexDirection="column">
 						<Router>
 							<Switch>
 								<Route path="/" component={Home} />

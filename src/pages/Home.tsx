@@ -16,14 +16,19 @@ const Home: FC = () => {
 	const { tables } = useDatabase();
 
 	return (
-		<Flex flexDirection="column" flexGrow={1} justifyContent="center">
+		<Flex
+			flexDirection="column"
+			flexGrow={1}
+			justifyContent="center"
+			maxHeight="100vh"
+		>
 			<Formik
 				initialValues={{ table: '', where: '' }}
 				onSubmit={async (values) => {
 					setQuery(
 						`SELECT * FROM \`${values.table}\` ${
-							values.where ? `WHERE ${values.where}` : 'LIMIT 100'
-						}`
+							values.where ? `WHERE ${values.where} ` : ''
+						}LIMIT 100`
 					);
 				}}
 			>

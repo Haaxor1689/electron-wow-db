@@ -3,12 +3,11 @@ import styled from '@emotion/styled';
 import { BoxProps, ComposeBox } from './Styled';
 
 type Props = {
-	variant?: 'primary';
+	active?: boolean;
 } & BoxProps;
 
-const Button = styled('button')<Props>`
+const Chip = styled.div<Props>`
 	${ComposeBox()}
-	color: ${(p) => p.theme.colors.text};
 	background-color: ${(p) => p.theme.colors.bg};
 	border-width: 1px;
 	border-radius: ${(p) => p.theme.borderRadius};
@@ -17,9 +16,9 @@ const Button = styled('button')<Props>`
 		background-color: ${(p) => p.theme.colors.bgHover};
 		border-color: ${(p) => p.theme.colors.borderHover};
 	}
-	
+
 	${(p) =>
-		p.variant === 'primary' &&
+		p.active &&
 		css`
 			background-color: ${p.theme.colors.focus};
 			border-width: 0;
@@ -28,10 +27,8 @@ const Button = styled('button')<Props>`
 			}
 		`}
 `;
-Button.defaultProps = {
-	type: 'button',
-	px: 3,
-	py: 2,
-	fontSize: 'md',
+Chip.defaultProps = {
+	px: 1,
 };
-export default Button;
+
+export default Chip;

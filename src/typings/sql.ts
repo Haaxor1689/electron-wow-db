@@ -18,3 +18,7 @@ export enum FieldFlags {
 	PART_KEY_FLAG = 16384 /** < Intern; Part of some key */,
 	GROUP_FLAG = 32768 /** < Intern: Group field */,
 }
+
+export const isPrimaryKey = (flags: number) =>
+	// eslint-disable-next-line no-bitwise
+	!!(flags & FieldFlags.PRI_KEY_FLAG);

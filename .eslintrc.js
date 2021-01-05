@@ -23,6 +23,7 @@ module.exports = {
 		'promise/always-return': 'off',
 		'react/no-array-index-key': 'off',
 		'react/jsx-props-no-spreading': 'off',
+		'react/jsx-fragments': 'off',
 	},
 	plugins: ['@typescript-eslint', 'react', 'react-hooks'],
 	settings: {
