@@ -19,7 +19,7 @@ module.exports = {
 		'react-hooks/exhaustive-deps': 'warn',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
 		'no-console': 'off',
-		'no-nested-ternary': 'error',
+		'no-nested-ternary': 'off',
 		'promise/always-return': 'off',
 		'react/no-array-index-key': 'off',
 		'react/jsx-props-no-spreading': 'off',

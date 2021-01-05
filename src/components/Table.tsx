@@ -1,12 +1,24 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
-import { FC, Fragment, useState } from 'react';
-import { FaKey } from 'react-icons/fa';
+import { FC, Fragment, useMemo, useState } from 'react';
+import { FaKey, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { SelectResponse } from '../hooks/useSqlQuery';
 import { SQL } from '../typings';
 import Chip from './Chip';
 import { Box, Flex } from './Styled';
 import Text from './Text';
+
+type Sorting = [string, 'ASC' | 'DESC'];
+
+const compare = <T extends unknown>(lhs: T, rhs: T) => {
+	if (typeof lhs === 'string' && typeof rhs === 'string') {
+		return lhs.localeCompare(rhs);
+	}
+	if (typeof lhs === 'number' && typeof rhs === 'number') {
+		return lhs > rhs ? 1 : lhs < rhs ? -1 : 0;
+	}
+	return 0;
+};
 
 type Props = {
 	data?: SelectResponse<Record<string, unknown>>;
@@ -14,6 +26,19 @@ type Props = {
 
 const Table: FC<Props> = ({ data }) => {
 	const [hiddenFields, setHiddenFields] = useState<Record<number, boolean>>({});
+	const [sorting, setSorting] = useState<Sorting>();
+
+	const sortedResults = useMemo(
+		() =>
+			sorting
+				? [...(data?.result ?? [])].sort((lhs, rhs) =>
+						sorting[1] === 'ASC'
+							? compare(lhs[sorting[0]], rhs[sorting[0]])
+							: compare(rhs[sorting[0]], lhs[sorting[0]])
+				  )
+				: data?.result ?? [],
+		[data?.result, sorting]
+	);
 
 	if (!data) {
 		return (
@@ -92,9 +117,18 @@ const Table: FC<Props> = ({ data }) => {
 											white-space: nowrap;
 										`}
 									>
-										<Box
+										<Flex
 											py={2}
 											px={1}
+											onClick={() =>
+												setSorting(
+													sorting?.[0] !== k.name
+														? [k.name, 'ASC']
+														: sorting[1] === 'ASC'
+														? [k.name, 'DESC']
+														: undefined
+												)
+											}
 											css={css`
 												border-top-width: 1px;
 												border-bottom-width: 1px;
@@ -105,14 +139,19 @@ const Table: FC<Props> = ({ data }) => {
 												<Box as={FaKey} fontSize="sm" mr={1} />
 											) : null}
 											<Text as="span">{k.name}</Text>
-										</Box>
+											{sorting?.[0] === k.name && (
+												<Flex flexGrow={1} justifyContent="flex-end">
+													{sorting[1] === 'ASC' ? <FaSortUp /> : <FaSortDown />}
+												</Flex>
+											)}
+										</Flex>
 									</Box>
 								)
 							)}
 						</tr>
 					</thead>
 					<tbody>
-						{data.result.map((r, ri) => (
+						{sortedResults.map((r, ri) => (
 							<tr
 								key={ri}
 								css={(theme) => css`
