@@ -9,7 +9,12 @@ import { Box, Flex } from './Styled';
 import Text from './Text';
 
 type Props = {
-	data?: SelectResponse<Record<string, unknown>>;
+	data?: SelectResponse<
+		Record<
+			string,
+			{ value: unknown; status?: 'modified' | 'deleted' | 'added' }
+		>
+	>;
 	sorting?: SQL.OrderBy;
 	setSorting: (sorting?: SQL.OrderBy) => void;
 };
@@ -153,14 +158,32 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 											key={ci}
 											py={2}
 											px={1}
-											css={css`
+											css={(theme) => css`
 												white-space: nowrap;
 												border-width: 1px;
 												border-top: 0;
 												border-bottom: 0;
+												${
+													c.status === 'modified' &&
+													css`
+														background-color: ${theme.colors.bgWarn};
+													`
+												}
+												${
+													c.status === 'added' &&
+													css`
+														background-color: ${theme.colors.bgSuccess};
+													`
+												}
+												${
+													c.status === 'deleted' &&
+													css`
+														background-color: ${theme.colors.bgError};
+													`
+												}
 											`}
 										>
-											{JSON.stringify(c)}
+											{JSON.stringify(c.value)}
 										</Box>
 									)
 								)}

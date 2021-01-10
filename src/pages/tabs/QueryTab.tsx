@@ -1,24 +1,27 @@
 import { Form, Formik } from 'formik';
 import React, { FC, useEffect, useState } from 'react';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
-import Button from '../components/Button';
-import SelectInput from '../components/form/SelectInput';
-import TextInput from '../components/form/TextInput';
-import { Flex } from '../components/Styled';
-import Table from '../components/Table';
-import Text from '../components/Text';
-import TextButton from '../components/TextButton';
-import useDatabase from '../hooks/useDatabase';
-import { useSelectQuery } from '../hooks/useSqlQuery';
-import { DB, SQL } from '../typings';
+import Button from '../../components/Button';
+import SelectInput from '../../components/form/SelectInput';
+import TextInput from '../../components/form/TextInput';
+import { Flex } from '../../components/Styled';
+import Table from '../../components/Table';
+import Text from '../../components/Text';
+import TextButton from '../../components/TextButton';
+import useDatabase from '../../hooks/useDatabase';
+import { useSelectQuery } from '../../hooks/useSqlQuery';
+import useTableData from '../../hooks/useTableData';
+import { DB, SQL } from '../../typings';
 
-const Home: FC = () => {
+const QueryTab: FC = () => {
 	const [query, setQuery] = useState<string>();
 
 	const [sorting, setSorting] = useState<SQL.OrderBy>();
 
 	const [pageSize, setPageSize] = useState(50);
 	const [page, setPage] = useState(0);
+
+	const { tables } = useDatabase();
 
 	const response = useSelectQuery<DB.Conditions>(
 		query
@@ -27,7 +30,8 @@ const Home: FC = () => {
 			  } LIMIT ${pageSize} OFFSET ${pageSize * page}`
 			: ''
 	);
-	const { tables } = useDatabase();
+
+	const data = useTableData(response.data);
 
 	useEffect(() => setPage(0), [pageSize, query]);
 	useEffect(() => setSorting(undefined), [query]);
@@ -63,7 +67,7 @@ const Home: FC = () => {
 						<Button type="submit" my="3" variant="primary">
 							Evaluate
 						</Button>
-						{response.data && (
+						{data && (
 							<>
 								<Flex alignItems="baseline">
 									<Text as="span" mr={2}>
@@ -97,9 +101,9 @@ const Home: FC = () => {
 					</Flex>
 				</Form>
 			</Formik>
-			<Table data={response.data} sorting={sorting} setSorting={setSorting} />
+			<Table data={data} sorting={sorting} setSorting={setSorting} />
 		</Flex>
 	);
 };
 
-export default Home;
+export default QueryTab;

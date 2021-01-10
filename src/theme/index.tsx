@@ -12,6 +12,7 @@ const theme = {
 		bg: '#242424',
 		bgGrey: '#292929',
 		bgError: '#290000',
+		bgSuccess: '', // TODO:
 		bgWarn: '#332b00',
 		bgHover: '#313131',
 		bgSelected: '#000000',
