@@ -6,7 +6,7 @@ type Props = {
 	active?: boolean;
 } & BoxProps;
 
-const TabButton = styled('button')<Props>`
+const TabButton = styled.button<Props>`
 	${ComposeBox()}
 	color: ${(p) => p.theme.colors.text};
 	background-color: ${(p) => p.theme.colors.bg};
@@ -18,7 +18,7 @@ const TabButton = styled('button')<Props>`
 		background-color: ${(p) => p.theme.colors.bgHover};
 		border-color: ${(p) => p.theme.colors.borderHover};
 	}
-	
+
 	${(p) =>
 		p.active &&
 		css`

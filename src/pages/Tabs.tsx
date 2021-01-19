@@ -1,57 +1,74 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
-import { FC, Fragment, ReactNode, useState } from 'react';
+import { FC, Fragment, useMemo } from 'react';
+import { FaTimes } from 'react-icons/fa';
 import TabButton from '../components/TabButton';
-import { Flex } from '../components/Styled';
-import QueryTab from './tabs/QueryTab';
-
-type Tab = {
-	id: number;
-	name: string;
-	render: ReactNode;
-};
+import { Box, Flex, Grid } from '../components/Styled';
+import { useTabProvider } from '../hooks/useTab';
+import TabSwitch from './TabSwitch';
+import IconButton from '../components/IconButton';
+import Text from '../components/Text';
+import Button from '../components/Button';
+import { TabTypes } from '../utils/tabs';
 
 const Tabs: FC = () => {
-	const [tabs, setTabs] = useState<Tab[]>([
-		{ id: 0, name: 'New query tab', render: <QueryTab /> },
-	]);
-	const [selected, setSelected] = useState(0);
+	const [state, dispatch, TabProvider] = useTabProvider();
+	const activeTab = useMemo(
+		() => state.tabs.find((t) => t.id === state.selected),
+		[state.tabs, state.selected]
+	);
 	return (
-		<Fragment>
+		<TabProvider value={[state, dispatch]}>
 			<Flex
+				px={1}
 				css={css`
+					gap: 1px;
 					border-bottom-width: 1px;
 				`}
 			>
-				{tabs.map((t) => (
+				{state.tabs.map((t) => (
 					<TabButton
 						key={t.id}
-						active={selected === t.id}
-						onClick={() => setSelected(t.id)}
+						active={state.selected === t.id}
+						onClick={() => dispatch({ type: 'Select', id: t.id })}
 					>
-						{t.name}
+						<Text as="span" mr={2}>
+							{t.name}
+						</Text>
+						<IconButton onClick={() => dispatch({ type: 'Remove', id: t.id })}>
+							<FaTimes />
+						</IconButton>
 					</TabButton>
 				))}
-				<TabButton
-					onClick={() =>
-						setTabs((t) => [
-							...t,
-							{
-								id: t.reduce(
-									(acc, next) => (next.id >= acc ? next.id + 1 : acc),
-									0
-								),
-								name: 'New query tab',
-								render: <QueryTab />,
-							},
-						])
-					}
-				>
+				<TabButton onClick={() => dispatch({ type: 'Select', id: '' })}>
 					+
 				</TabButton>
 			</Flex>
-			{tabs.find((t) => t.id === selected)?.render}
-		</Fragment>
+			{activeTab ? (
+				<TabSwitch tab={activeTab} />
+			) : (
+				<Fragment>
+					<Text fontSize={80} fontWeight="bold" textAlign="center" my={4}>
+						Electron WoW
+					</Text>
+					<Box as="details" mb={2} mx={2}>
+						<Box as="summary" mb={2}>
+							Raw tabs
+						</Box>
+						<Grid gridTemplateColumns="repeat(auto-fill, minmax(200px, 1fr))">
+							{TabTypes.map((t) => (
+								<Button
+									key={t}
+									onClick={() => dispatch({ type: 'Add', tab: { type: t } })}
+								>
+									{t}
+								</Button>
+							))}
+						</Grid>
+					</Box>
+				</Fragment>
+			)}
+		</TabProvider>
 	);
 };
 

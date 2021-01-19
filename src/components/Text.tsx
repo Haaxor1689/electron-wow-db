@@ -7,7 +7,7 @@ type Props = {
 	ellipsis?: boolean;
 };
 
-const Text = styled('p')<BoxProps & Props>`
+const Text = styled.p<BoxProps & Props>`
 	${ComposeBox()}
 	${(p) =>
 		p.ellipsis &&

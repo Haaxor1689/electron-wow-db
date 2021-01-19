@@ -15,12 +15,7 @@ const CompareTab: FC = () => {
 	const data = useTableData(val);
 
 	return (
-		<Flex
-			flexDirection="column"
-			flexGrow={1}
-			justifyContent="center"
-			maxHeight="100vh"
-		>
+		<>
 			<Formik
 				initialValues={{ lhs: '', rhs: '' }}
 				onSubmit={async (values) => {
@@ -65,7 +60,7 @@ const CompareTab: FC = () => {
 				</Form>
 			</Formik>
 			<Table data={data} setSorting={() => {}} />
-		</Flex>
+		</>
 	);
 };
 

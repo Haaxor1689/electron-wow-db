@@ -15,14 +15,17 @@ const GlobalStyles = () => (
 
 			* {
 				font-family: Calibri, sans-serif;
-				font-size: ${theme.fontSizes.md}px;
-
 				border: 0 solid ${theme.colors.border};
 			}
 
 			p {
 				padding: 0;
 				margin: ${theme.space[2]}px 0;
+			}
+
+			p,
+			span {
+				font-size: ${theme.fontSizes.md}px;
 			}
 
 			input {

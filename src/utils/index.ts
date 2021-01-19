@@ -8,3 +8,16 @@ export const compare = <T extends unknown>(lhs: T, rhs: T) => {
 	}
 	return 0;
 };
+
+export const getCodeColor = (val: unknown) => {
+	if (val === null) {
+		return 'codeKeyword';
+	}
+	if (typeof val === 'string') {
+		return 'codeString';
+	}
+	if (typeof val === 'number') {
+		return 'codeNumber';
+	}
+	return 'text';
+};

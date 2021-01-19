@@ -6,7 +6,7 @@ type Props = {
 	variant?: 'primary';
 } & BoxProps;
 
-const Button = styled('button')<Props>`
+const Button = styled.button<Props>`
 	${ComposeBox()}
 	color: ${(p) => p.theme.colors.text};
 	background-color: ${(p) => p.theme.colors.bg};

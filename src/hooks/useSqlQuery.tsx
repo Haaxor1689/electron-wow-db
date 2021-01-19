@@ -9,11 +9,16 @@ export type SelectResponse<T> = {
 
 export const useSelectQuery = <T extends unknown>(query: string) => {
 	const { sql } = useDatabase();
+
 	return useReactQuery<unknown, MysqlError, SelectResponse<T>>(
 		query,
 		() =>
 			new Promise((resolve, reject) => {
-				console.log('[WOWDB] Query:', query);
+				console.log('[WOWDB] Query:', query || '<Empty query>');
+				if (!query) {
+					resolve({ result: [], fields: [] });
+					return;
+				}
 				sql?.query(query, (err, result, fields) => {
 					if (err) {
 						reject(err);

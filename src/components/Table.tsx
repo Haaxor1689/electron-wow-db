@@ -1,12 +1,16 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
-import { FC, Fragment, useState } from 'react';
-import { FaKey, FaSortDown, FaSortUp } from 'react-icons/fa';
+import { FC, Fragment, useMemo, useState } from 'react';
+import { FaEdit, FaKey, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { SelectResponse } from '../hooks/useSqlQuery';
+import { useAddTab } from '../hooks/useTab';
 import { SQL } from '../typings';
+import { getCodeColor } from '../utils';
+import { TabsMetadata, TabTypeVariant } from '../utils/tabs';
 import Chip from './Chip';
 import { Box, Flex } from './Styled';
 import Text from './Text';
+import TextButton from './TextButton';
 
 type Props = {
 	data?: SelectResponse<
@@ -22,13 +26,26 @@ type Props = {
 const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 	const [hiddenFields, setHiddenFields] = useState<Record<number, boolean>>({});
 
-	if (!data) {
+	// Check if there is a TabType for current table
+	const relevantTab = useMemo(() => {
+		const tab = Object.entries(TabsMetadata).find(
+			(e) => e[1].table === data?.fields[0]?.table
+		);
+		return tab
+			? { type: tab[0] as TabTypeVariant, key: tab[1].key as string }
+			: undefined;
+	}, [data?.fields]);
+
+	const addTab = useAddTab();
+
+	if (!data || data.fields.length <= 0) {
 		return (
 			<Text textAlign="center" fontStyle="italic" opacity={0.5}>
 				No results
 			</Text>
 		);
 	}
+
 	return (
 		<Fragment>
 			<Box as="details" mb={2} mx={2}>
@@ -75,6 +92,35 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 				>
 					<thead>
 						<tr>
+							{relevantTab && (
+								<Box
+									as="th"
+									position="sticky"
+									top={0}
+									p={0}
+									bg="bgGrey"
+									fontWeight="normal"
+									textAlign="left"
+									css={css`
+										border-left-width: 1px;
+										border-right-width: 1px;
+										white-space: nowrap;
+									`}
+								>
+									<Flex
+										py={2}
+										px={1}
+										justifyContent="center"
+										css={css`
+											border-top-width: 1px;
+											border-bottom-width: 1px;
+											white-space: nowrap;
+										`}
+									>
+										*
+									</Flex>
+								</Box>
+							)}
 							{data.fields.map((k, i) =>
 								hiddenFields[i] ? null : (
 									<Box
@@ -151,6 +197,33 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 									}
 								`}
 							>
+								{relevantTab && (
+									<Box
+										as="td"
+										py={2}
+										px={1}
+										tabIndex={0}
+										css={css`
+											position: sticky;
+											left: 0;
+											white-space: nowrap;
+											border-width: 1px;
+											border-top: 0;
+											border-bottom: 0;
+										`}
+									>
+										<TextButton
+											onClick={() =>
+												addTab({
+													type: relevantTab.type,
+													[relevantTab.key]: r[relevantTab.key].value,
+												})
+											}
+										>
+											<FaEdit />
+										</TextButton>
+									</Box>
+								)}
 								{Object.values(r).map((c, ci) =>
 									hiddenFields[ci] ? null : (
 										<Box
@@ -158,6 +231,13 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 											key={ci}
 											py={2}
 											px={1}
+											color={getCodeColor(c.value)}
+											fontWeight={
+												SQL.isPrimaryKey(data.fields[ci].flags)
+													? 'bold'
+													: undefined
+											}
+											tabIndex={0}
 											css={(theme) => css`
 												white-space: nowrap;
 												border-width: 1px;

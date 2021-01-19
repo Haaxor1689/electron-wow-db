@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import Button from '../../components/Button';
 import SelectInput from '../../components/form/SelectInput';
@@ -10,48 +10,61 @@ import Text from '../../components/Text';
 import TextButton from '../../components/TextButton';
 import useDatabase from '../../hooks/useDatabase';
 import { useSelectQuery } from '../../hooks/useSqlQuery';
+import { useTab } from '../../hooks/useTab';
+import { QueryTabState } from '../../utils/tabs';
 import useTableData from '../../hooks/useTableData';
-import { DB, SQL } from '../../typings';
+import { DB } from '../../typings';
 
-const QueryTab: FC = () => {
-	const [query, setQuery] = useState<string>();
-
-	const [sorting, setSorting] = useState<SQL.OrderBy>();
-
-	const [pageSize, setPageSize] = useState(50);
-	const [page, setPage] = useState(0);
+const QueryTab: FC<{ id: string }> = ({ id }) => {
+	const [{ table, where, sorting, pageSize, page }, { update }] = useTab<
+		QueryTabState
+	>(id);
 
 	const { tables } = useDatabase();
 
 	const response = useSelectQuery<DB.Conditions>(
-		query
-			? `${
-					query + (sorting ? ` ORDER BY ${sorting[0]} ${sorting[1]}` : '')
+		table
+			? `SELECT * FROM \`${table}\`${where ? ` WHERE ${where}` : ''}${
+					sorting ? ` ORDER BY ${sorting[0]} ${sorting[1]}` : ''
 			  } LIMIT ${pageSize} OFFSET ${pageSize * page}`
 			: ''
 	);
 
 	const data = useTableData(response.data);
 
-	useEffect(() => setPage(0), [pageSize, query]);
-	useEffect(() => setSorting(undefined), [query]);
+	// Reset page when pageSize or sorting changes
+	useEffect(() => update({ page: 0 }), [update, pageSize, table]);
+
+	// Reset sorting when query changes
+	useEffect(() => update({ sorting: undefined }), [update, table]);
+
+	// Update tab name after arguments change
+	useEffect(() => {
+		if (table) update({ name: `${table}${where ? ` WHERE ${where}` : ''}` });
+	}, [update, table, where]);
+
+	if (response.isLoading) {
+		return (
+			<Text textAlign="center" my={4}>
+				Loading...
+			</Text>
+		);
+	}
+
+	if (response.isError || !response.data) {
+		return (
+			<Text textAlign="center" my={4}>
+				Error
+			</Text>
+		);
+	}
 
 	return (
-		<Flex
-			flexDirection="column"
-			flexGrow={1}
-			justifyContent="center"
-			maxHeight="100vh"
-		>
+		<>
 			<Formik
-				initialValues={{ table: '', where: '' }}
-				onSubmit={async (values) => {
-					setQuery(
-						`SELECT * FROM \`${values.table}\`${
-							values.where ? ` WHERE ${values.where}` : ''
-						}`
-					);
-				}}
+				initialValues={{ table, where }}
+				enableReinitialize
+				onSubmit={async (values) => update({ ...values })}
 			>
 				<Form>
 					<Flex flexDirection="column" alignItems="center" mb={4}>
@@ -77,7 +90,7 @@ const QueryTab: FC = () => {
 										<TextButton
 											key={p}
 											selected={p === pageSize}
-											onClick={() => setPageSize(p)}
+											onClick={() => update({ pageSize: p })}
 										>
 											{p}
 										</TextButton>
@@ -85,14 +98,14 @@ const QueryTab: FC = () => {
 								</Flex>
 								<Flex alignItems="baseline">
 									<TextButton
-										onClick={() => setPage((p) => Math.max(p - 1, 0))}
+										onClick={() => update({ page: Math.max(page - 1, 0) })}
 									>
 										<FaAngleDoubleLeft />
 									</TextButton>
 									<Text as="span" mx={2}>
 										Page {page}
 									</Text>
-									<TextButton onClick={() => setPage((p) => p + 1)}>
+									<TextButton onClick={() => update({ page: page + 1 })}>
 										<FaAngleDoubleRight />
 									</TextButton>
 								</Flex>
@@ -101,8 +114,12 @@ const QueryTab: FC = () => {
 					</Flex>
 				</Form>
 			</Formik>
-			<Table data={data} sorting={sorting} setSorting={setSorting} />
-		</Flex>
+			<Table
+				data={data}
+				sorting={sorting}
+				setSorting={(s) => update({ sorting: s })}
+			/>
+		</>
 	);
 };
 
