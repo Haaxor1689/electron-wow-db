@@ -75,7 +75,7 @@ const QueryTab: FC<{ id: string }> = ({ id }) => {
 							<Text mr={3}>SELECT * FROM</Text>
 							<SelectInput variant="lg" name="table" options={tables} />
 							<Text mx={3}>WHERE</Text>
-							<TextInput variant="lg" name="where" />
+							<TextInput variant="lg" name="where" width={500} />
 						</Flex>
 						<Button type="submit" my="3" variant="primary">
 							Evaluate

@@ -6,6 +6,9 @@ type DatabaseContextType = {
 	tables: string[];
 };
 
+// TODO: Add login screen
+const database = 'turtle';
+
 const DatabaseContext = createContext<DatabaseContextType>({ tables: [] });
 
 export const useDatabaseProvider = () => {
@@ -17,7 +20,7 @@ export const useDatabaseProvider = () => {
 			host: '127.0.0.1',
 			user: 'root',
 			password: 'root',
-			database: 'mangos',
+			database,
 		});
 		sql.connect((err) => {
 			if (err) {
@@ -25,8 +28,12 @@ export const useDatabaseProvider = () => {
 				return;
 			}
 			console.log('[WOWDB] Connection opened.');
-			sql.query('SHOW tables', (_, result: { Tables_in_mangos: string }[]) => {
-				setCallbacks({ sql, tables: result.map((r) => r.Tables_in_mangos) });
+			sql.query('SHOW tables', (_, result: Record<string, string>[]) => {
+				console.log(result);
+				setCallbacks({
+					sql,
+					tables: result.map((r) => r[`Tables_in_${database}`] as string),
+				});
 			});
 		});
 
