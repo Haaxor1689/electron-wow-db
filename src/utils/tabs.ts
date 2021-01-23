@@ -47,7 +47,7 @@ const InitialDbcTab = (initial: Partial<DbcTabState> = {}): DbcTabState => ({
 
 export type CreatureTabState = TabBase<'Creature'> & {
 	entry?: number;
-	values: Partial<CreatureTemplate>;
+	values?: Partial<CreatureTemplate>;
 };
 
 const InitialCreatureTab = (
@@ -56,7 +56,6 @@ const InitialCreatureTab = (
 	id: uuid(),
 	type: 'Creature',
 	name: 'New Creature Tab',
-	values: {},
 	...initial,
 });
 

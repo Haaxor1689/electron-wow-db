@@ -2,6 +2,8 @@
 import { jsx, css } from '@emotion/react';
 import { Form, Formik } from 'formik';
 import { FC, useEffect, useMemo, useState } from 'react';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Box, Flex } from '../../components/Styled';
 import Text from '../../components/Text';
 import { useSelectQuery } from '../../hooks/useSqlQuery';
@@ -31,6 +33,7 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 			? `SELECT * FROM \`creature_template\` WHERE \`entry\` = ${entry}`
 			: ''
 	);
+	console.log({ entry, values, data: response.data });
 
 	// Update tab name
 	useEffect(
@@ -71,15 +74,17 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 	return (
 		<Formik
 			initialValues={values ?? initialValues}
-			onSubmit={async () => {
-				console.log(
-					formToSql(TabsMetadata.Creature as never, values, initialValues)
-				);
-			}}
+			enableReinitialize
+			onSubmit={async () => {}}
 		>
-			<Form>
+			<Box as={Form} flexGrow={1}>
 				<AutoFormUpdate onUpdate={update} />
-				<Flex flexDirection="column" alignItems="flex-start" m={4}>
+				<Flex
+					position="relative"
+					flexDirection="column"
+					alignItems="flex-start"
+					m={4}
+				>
 					<Flex>
 						<Flex flexDirection="column" mr={3}>
 							<TextInput<K>
@@ -169,16 +174,28 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 						Submit
 					</Button>
 
-					<Box as="details" mb={2} mx={2}>
-						<Box as="summary" mb={2} fontSize="lg">
-							Query
-						</Box>
-						<Text>
-							{formToSql(TabsMetadata.Creature as never, values, initialValues)}
-						</Text>
-					</Box>
+					<Box flexGrow={1} flexBasis="100%" />
 				</Flex>
-			</Form>
+				<Box
+					position="sticky"
+					bottom={0}
+					px={4}
+					css={css`
+						border-top-width: 1px;
+					`}
+				>
+					<Text fontSize="xl" fontWeight="bold">
+						Generated query:
+					</Text>
+					<SyntaxHighlighter language="sql" style={vs2015}>
+						{formToSql(
+							TabsMetadata.Creature as never,
+							values ?? {},
+							initialValues
+						) || '-- No changes'}
+					</SyntaxHighlighter>
+				</Box>
+			</Box>
 		</Formik>
 	);
 };

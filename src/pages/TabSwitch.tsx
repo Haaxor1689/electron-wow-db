@@ -15,7 +15,7 @@ const TabSwitch: FC<{ tab: TabState }> = ({ tab }) => {
 	if (!Component) {
 		throw Error(`[WOWDB] Error: Unknown tab to render ${JSON.stringify(tab)}`);
 	}
-	return <Component id={tab.id} />;
+	return <Component key={tab.id} id={tab.id} />;
 };
 
 export default TabSwitch;

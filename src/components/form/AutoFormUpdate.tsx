@@ -8,6 +8,8 @@ const AutoFormUpdate = <T extends Record<string, unknown>>({
 }) => {
 	const { values } = useFormikContext<T>();
 	useEffect(() => {
+		console.log('Updated');
+
 		onUpdate({ values });
 	}, [onUpdate, values]);
 	return null;
