@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { SQL } from '../typings';
+import { CreatureTemplate } from '../typings/tables/creature';
 
 export const TabTypes = ['Query', 'Dbc', 'Creature'] as const;
 export type TabTypeVariant = typeof TabTypes[number];
@@ -45,7 +46,8 @@ const InitialDbcTab = (initial: Partial<DbcTabState> = {}): DbcTabState => ({
 });
 
 export type CreatureTabState = TabBase<'Creature'> & {
-	entry: number;
+	entry?: number;
+	values: Partial<CreatureTemplate>;
 };
 
 const InitialCreatureTab = (
@@ -54,13 +56,13 @@ const InitialCreatureTab = (
 	id: uuid(),
 	type: 'Creature',
 	name: 'New Creature Tab',
-	entry: 1,
+	values: {},
 	...initial,
 });
 
 export type TabState = QueryTabState | DbcTabState | CreatureTabState;
 
-type TabMetaType = {
+export type TabMetaType = {
 	table?: string;
 	key?: string;
 	initialData: (initial: Partial<TabState>) => TabState;

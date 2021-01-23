@@ -1,22 +1,30 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/react';
 import { Form, Formik } from 'formik';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Box, Flex } from '../../components/Styled';
 import Text from '../../components/Text';
 import { useSelectQuery } from '../../hooks/useSqlQuery';
 import { useTab } from '../../hooks/useTab';
-import { CreatureTabState } from '../../utils/tabs';
-import { DB } from '../../typings';
+import { CreatureTabState, TabsMetadata } from '../../utils/tabs';
 import TextInput from '../../components/form/TextInput';
 import TabButton from '../../components/TabButton';
+import formToSql from '../../utils/formToSql';
+import AutoFormUpdate from '../../components/form/AutoFormUpdate';
+import Button from '../../components/Button';
+import {
+	CreatureTemplate,
+	InitialCreatureTemplate,
+} from '../../typings/tables/creature';
 
 // TODO: Add check that display probabilities add up to total probability
 
-const CreatureTab: FC<{ id: string }> = ({ id }) => {
-	const [{ entry }, { update }] = useTab<CreatureTabState>(id);
+type K = keyof CreatureTemplate;
 
-	const response = useSelectQuery<DB.CreatureTemplate>(
+const CreatureTab: FC<{ id: string }> = ({ id }) => {
+	const [{ entry, values }, { update }] = useTab<CreatureTabState>(id);
+
+	const response = useSelectQuery<CreatureTemplate>(
 		entry
 			? `SELECT * FROM \`creature_template\` WHERE \`entry\` = ${entry}`
 			: ''
@@ -24,8 +32,19 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 
 	// Update tab name
 	useEffect(
-		() => response.data && update({ name: response.data?.result[0].name }),
-		[update, response.data]
+		() =>
+			update({
+				name:
+					response.data?.result?.[0]?.name ??
+					// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+					(values?.name || 'New Creature Tab'),
+			}),
+		[update, response.data, values?.name]
+	);
+
+	const initialValues = useMemo(
+		() => response.data?.result?.[0] ?? InitialCreatureTemplate(),
+		[response.data]
 	);
 
 	// Display tabs
@@ -47,26 +66,34 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 		);
 	}
 
-	const data = response.data.result[0];
-
 	return (
 		<Formik
-			initialValues={data}
-			enableReinitialize
-			onSubmit={async (values) => update({ ...values })}
+			initialValues={initialValues}
+			onSubmit={async () => {
+				console.log(
+					formToSql(TabsMetadata.Creature as never, values, initialValues)
+				);
+			}}
 		>
 			<Form>
+				<AutoFormUpdate onUpdate={update} />
 				<Flex flexDirection="column" alignItems="flex-start" m={4}>
 					<Flex>
 						<Flex flexDirection="column" mr={3}>
-							<TextInput name="entry" label="Entry" disabled mb={3} />
+							<TextInput<K>
+								name="entry"
+								label="Entry"
+								disabled
+								mb={3}
+								placeholder="*"
+							/>
 						</Flex>
 						<Flex flexDirection="column">
-							<TextInput name="patch" label="Patch" disabled mb={3} />
+							<TextInput<K> name="patch" label="Patch" disabled mb={3} />
 						</Flex>
 					</Flex>
-					<TextInput name="name" label="Name" fontSize="xl" mb={3} />
-					<TextInput name="subname" label="Subname" fontSize="lg" mb={3} />
+					<TextInput<K> name="name" label="Name" fontSize="xl" mb={3} />
+					<TextInput<K> name="subname" label="Subname" fontSize="lg" mb={3} />
 
 					<Flex flexDirection="column" my={3}>
 						<Flex
@@ -99,56 +126,46 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 								name={`display_id${displayTab}`}
 								label="Id"
 							/>
-							<TextInput
-								type="number"
-								name={`display_scale${displayTab}`}
-								label="Scale"
-								width={50}
-							/>
-							<TextInput
-								type="number"
-								name={`display_probability${displayTab}`}
-								label="Prob"
-								width={50}
-							/>
 						</Flex>
-						<TextInput
-							type="number"
-							name="display_total_probability"
-							label="Total probability"
-						/>
 					</Flex>
 
 					<Flex flexDirection="column">
 						<Text as="label">Level</Text>
 						<Flex>
-							<TextInput type="number" name="level_min" />
-							<TextInput type="number" name="level_max" />
+							<TextInput<K> type="number" name="level_min" />
+							<Box mx={2}>-</Box>
+							<TextInput<K> type="number" name="level_max" />
 						</Flex>
 					</Flex>
 
 					<Flex flexDirection="column">
 						<Text as="label">Health</Text>
 						<Flex>
-							<TextInput type="number" name="health_min" />
-							<TextInput type="number" name="health_max" />
+							<TextInput<K> type="number" name="health_min" />
+							<Box mx={2}>-</Box>
+							<TextInput<K> type="number" name="health_max" />
 						</Flex>
 					</Flex>
 
 					<Flex flexDirection="column">
 						<Text as="label">Mana</Text>
 						<Flex>
-							<TextInput type="number" name="mana_min" />
-							<TextInput type="number" name="mana_max" />
+							<TextInput<K> type="number" name="mana_min" />
+							<Box mx={2}>-</Box>
+							<TextInput<K> type="number" name="mana_max" />
 						</Flex>
 					</Flex>
+
+					<Button type="submit" mt={4} variant="primary">
+						Submit
+					</Button>
 
 					<Text
 						css={css`
 							white-space: pre-wrap;
 						`}
 					>
-						{JSON.stringify(data, null, 4)}
+						{JSON.stringify(initialValues, null, 4)}
 					</Text>
 				</Flex>
 			</Form>
