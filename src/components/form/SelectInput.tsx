@@ -1,25 +1,23 @@
 import { ErrorMessage, useField } from 'formik';
-import React, { FC } from 'react';
+import React from 'react';
+import { InputProps, SelectOption } from '../../typings';
 import { Select } from '../Input';
-import { Flex } from '../Styled';
 
-type Props = {
-	variant?: 'lg';
-	options: string[];
-	name: string;
-} & Omit<React.HTMLProps<HTMLSelectElement>, 'as'>;
+type Props<Key extends string> = {
+	options: SelectOption[];
+} & InputProps<Key, HTMLSelectElement>;
 
-const SelectInput: FC<Props> = ({
+const SelectInput = <Key extends string>({
 	variant,
 	options,
 	name,
 	label,
 	placeholder,
 	...props
-}) => {
+}: Props<Key>) => {
 	const [field] = useField<string>(name);
 	return (
-		<Flex>
+		<>
 			{label && <label htmlFor={name}>{label}</label>}
 			<Select
 				{...field}
@@ -28,11 +26,11 @@ const SelectInput: FC<Props> = ({
 			>
 				<option value="" label={placeholder} disabled selected hidden />
 				{options.map((o) => (
-					<option key={o} value={o} label={o} />
+					<option key={o.value} {...o} />
 				))}
 			</Select>
 			<ErrorMessage name={name} />
-		</Flex>
+		</>
 	);
 };
 

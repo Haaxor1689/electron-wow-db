@@ -1,20 +1,14 @@
 import { ErrorMessage, useField } from 'formik';
 import React from 'react';
+import { InputProps } from '../../typings';
 import Input from '../Input';
-import { BoxProps } from '../Styled';
-
-type Props<Key extends string> = {
-	variant?: 'lg';
-	name: Key;
-} & Omit<React.HTMLProps<HTMLInputElement>, 'as'> &
-	BoxProps;
 
 const TextInput = <Key extends string>({
 	variant,
 	name,
 	label,
 	...props
-}: Props<Key>) => {
+}: InputProps<Key, HTMLInputElement>) => {
 	const [field] = useField<string>(name);
 	return (
 		<>

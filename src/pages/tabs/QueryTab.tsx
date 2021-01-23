@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import Button from '../../components/Button';
 import SelectInput from '../../components/form/SelectInput';
@@ -21,6 +21,10 @@ const QueryTab: FC<{ id: string }> = ({ id }) => {
 	>(id);
 
 	const { tables } = useDatabase();
+	const tableOptions = useMemo(
+		() => tables.map((t) => ({ value: t, label: t })),
+		[tables]
+	);
 
 	const response = useSelectQuery<DB.Conditions>(
 		table
@@ -73,7 +77,7 @@ const QueryTab: FC<{ id: string }> = ({ id }) => {
 						</Text>
 						<Flex fontSize="lg" alignItems="center">
 							<Text mr={3}>SELECT * FROM</Text>
-							<SelectInput variant="lg" name="table" options={tables} />
+							<SelectInput variant="lg" name="table" options={tableOptions} />
 							<Text mx={3}>WHERE</Text>
 							<TextInput variant="lg" name="where" width={500} />
 						</Flex>

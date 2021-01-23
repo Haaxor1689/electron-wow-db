@@ -15,7 +15,9 @@ import Button from '../../components/Button';
 import {
 	CreatureTemplate,
 	InitialCreatureTemplate,
-} from '../../typings/tables/creature';
+} from '../../utils/tables/creature_template';
+import TableSelectInput from '../../components/form/TableSelectInput';
+import { Faction, mapFactionRows } from '../../utils/tables/faction';
 
 // TODO: Add check that display probabilities add up to total probability
 
@@ -68,7 +70,7 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 
 	return (
 		<Formik
-			initialValues={initialValues}
+			initialValues={values ?? initialValues}
 			onSubmit={async () => {
 				console.log(
 					formToSql(TabsMetadata.Creature as never, values, initialValues)
@@ -156,17 +158,25 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 						</Flex>
 					</Flex>
 
+					<TableSelectInput<K, Faction>
+						name="faction"
+						label="Faction"
+						table="faction"
+						mapRows={mapFactionRows}
+					/>
+
 					<Button type="submit" mt={4} variant="primary">
 						Submit
 					</Button>
 
-					<Text
-						css={css`
-							white-space: pre-wrap;
-						`}
-					>
-						{JSON.stringify(initialValues, null, 4)}
-					</Text>
+					<Box as="details" mb={2} mx={2}>
+						<Box as="summary" mb={2} fontSize="lg">
+							Query
+						</Box>
+						<Text>
+							{formToSql(TabsMetadata.Creature as never, values, initialValues)}
+						</Text>
+					</Box>
 				</Flex>
 			</Form>
 		</Formik>

@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { SQL } from '../typings';
-import { CreatureTemplate } from '../typings/tables/creature';
+import { CreatureTemplate } from './tables/creature_template';
 
 export const TabTypes = ['Query', 'Dbc', 'Creature'] as const;
 export type TabTypeVariant = typeof TabTypes[number];
