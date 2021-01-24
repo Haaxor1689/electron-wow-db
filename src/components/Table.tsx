@@ -20,7 +20,7 @@ type Props = {
 		>
 	>;
 	sorting?: SQL.OrderBy;
-	setSorting: (sorting?: SQL.OrderBy) => void;
+	setSorting?: (sorting?: SQL.OrderBy) => void;
 };
 
 const Table: FC<Props> = ({ data, sorting, setSorting }) => {
@@ -149,7 +149,7 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 											py={2}
 											px={1}
 											onClick={() =>
-												setSorting(
+												setSorting?.(
 													sorting?.[0] !== k.name
 														? [k.name, 'ASC']
 														: sorting[1] === 'ASC'

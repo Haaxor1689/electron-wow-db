@@ -10,6 +10,7 @@ import IconButton from '../components/IconButton';
 import Text from '../components/Text';
 import Button from '../components/Button';
 import { TabTypes } from '../utils/tabs';
+import Search from './Search';
 
 const Tabs: FC = () => {
 	const [state, dispatch, TabProvider] = useTabProvider();
@@ -66,6 +67,7 @@ const Tabs: FC = () => {
 							))}
 						</Grid>
 					</Box>
+					<Search />
 				</Fragment>
 			)}
 		</TabProvider>

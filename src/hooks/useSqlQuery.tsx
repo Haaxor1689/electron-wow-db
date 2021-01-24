@@ -11,7 +11,7 @@ export const useSelectQuery = <T extends unknown>(query: string) => {
 	const { sql } = useDatabase();
 
 	return useReactQuery<unknown, MysqlError, SelectResponse<T>>(
-		query,
+		[query, !!sql],
 		() =>
 			new Promise((resolve, reject) => {
 				console.log('[WOWDB] Query:', query || '<Empty query>');
