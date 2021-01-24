@@ -33,7 +33,6 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 			? `SELECT * FROM \`creature_template\` WHERE \`entry\` = ${entry}`
 			: ''
 	);
-	console.log({ entry, values, data: response.data });
 
 	// Update tab name
 	useEffect(

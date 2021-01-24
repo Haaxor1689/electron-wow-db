@@ -37,7 +37,7 @@ const Search: FC = () => {
 		),
 	};
 
-	const [tab, setTab] = useState<SearchTabVariant>('Creatures');
+	const [tab, setTab] = useState<SearchTabVariant>('Items');
 
 	const data = useTableData(response[tab].data);
 

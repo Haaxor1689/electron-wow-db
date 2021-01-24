@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
+import { mapValues } from 'lodash-es';
 import { FC, Fragment, useMemo, useState } from 'react';
 import { FaEdit, FaKey, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { SelectResponse } from '../hooks/useSqlQuery';
@@ -217,6 +218,7 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 												addTab({
 													type: relevantTab.type,
 													[relevantTab.key]: r[relevantTab.key].value,
+													values: mapValues(r, (v) => v.value),
 												})
 											}
 										>
