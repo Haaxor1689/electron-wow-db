@@ -2,6 +2,7 @@
 import { jsx, css } from '@emotion/react';
 import { Form, Formik } from 'formik';
 import { FC, Fragment, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import { UseQueryResult } from 'react-query';
 import Button from '../components/Button';
 import TextInput from '../components/form/TextInput';
@@ -65,25 +66,23 @@ const Search: FC = () => {
 				onSubmit={async (values) => setName(values.name)}
 			>
 				<Form>
-					<Flex flexDirection="column" alignItems="center" mb={4}>
-						<Flex>
-							<TextInput
-								variant="lg"
-								name="name"
-								placeholder="Quick search..."
-								width={500}
-							/>
-							<Button
-								type="submit"
-								variant="primary"
-								css={css`
-									border-top-left-radius: 0;
-									border-bottom-left-radius: 0;
-								`}
-							>
-								Search
-							</Button>
-						</Flex>
+					<Flex mb={4} justifyContent="center">
+						<TextInput
+							variant="lg"
+							name="name"
+							placeholder="Quick search..."
+							width={500}
+							mr={-1}
+						/>
+						<Button
+							type="submit"
+							css={css`
+								border-top-left-radius: 0;
+								border-bottom-left-radius: 0;
+							`}
+						>
+							<FaSearch />
+						</Button>
 					</Flex>
 				</Form>
 			</Formik>

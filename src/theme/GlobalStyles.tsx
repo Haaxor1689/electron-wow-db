@@ -31,6 +31,10 @@ const GlobalStyles = () => (
 			input {
 				min-width: 0;
 			}
+
+			svg {
+				display: block;
+			}
 		`}
 	/>
 );

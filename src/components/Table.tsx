@@ -157,6 +157,7 @@ const Table: FC<Props> = ({ data, allColumns, sorting, setSorting }) => {
 										<Flex
 											py={2}
 											px={1}
+											alignItems="center"
 											onClick={() =>
 												setSorting?.(
 													sorting?.[0] !== k.name
@@ -173,7 +174,7 @@ const Table: FC<Props> = ({ data, allColumns, sorting, setSorting }) => {
 											`}
 										>
 											{SQL.isPrimaryKey(k.flags) ? (
-												<Box as={FaKey} fontSize="sm" mr={1} />
+												<Box as={FaKey} fontSize="sm" mx={1} />
 											) : null}
 											<Text as="span">{k.name}</Text>
 											{sorting?.[0] === k.name && (

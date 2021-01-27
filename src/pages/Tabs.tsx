@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react';
 import { FC, Fragment, useMemo } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaHome, FaTimes } from 'react-icons/fa';
 import TabButton from '../components/TabButton';
 import { Box, Flex, Grid } from '../components/Styled';
 import { useTabProvider } from '../hooks/useTab';
@@ -27,6 +27,9 @@ const Tabs: FC = () => {
 					border-bottom-width: 1px;
 				`}
 			>
+				<TabButton px={2} onClick={() => dispatch({ type: 'Select', id: '' })}>
+					<FaHome />
+				</TabButton>
 				{state.tabs.map((t) => (
 					<TabButton
 						key={t.id}
@@ -41,9 +44,6 @@ const Tabs: FC = () => {
 						</IconButton>
 					</TabButton>
 				))}
-				<TabButton onClick={() => dispatch({ type: 'Select', id: '' })}>
-					+
-				</TabButton>
 			</Flex>
 			{activeTab ? (
 				<TabSwitch tab={activeTab} />
