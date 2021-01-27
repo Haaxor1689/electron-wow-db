@@ -27,6 +27,16 @@ const Button = styled.button<Props>`
 				background-color: ${p.theme.colors.focusHover};
 			}
 		`}
+	
+	${(p) =>
+		p.disabled &&
+		css`
+			cursor: no-drop;
+			background-color: ${p.theme.colors.bgGrey};
+			:hover {
+				background-color: ${p.theme.colors.bgGrey};
+			}
+		`}
 `;
 Button.defaultProps = {
 	type: 'button',

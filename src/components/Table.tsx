@@ -9,6 +9,7 @@ import { SQL } from '../typings';
 import { getCodeColor } from '../utils';
 import { TabsMetadata, TabTypeVariant } from '../utils/tabs';
 import Chip from './Chip';
+import IconButton from './IconButton';
 import { Box, Flex } from './Styled';
 import Text from './Text';
 import TextButton from './TextButton';
@@ -98,24 +99,19 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 									as="th"
 									position="sticky"
 									top={0}
+									left={0}
 									p={0}
 									bg="bgGrey"
 									fontWeight="normal"
 									textAlign="left"
-									css={css`
-										border-left-width: 1px;
-										border-right-width: 1px;
-										white-space: nowrap;
-									`}
+									zIndex={2}
 								>
 									<Flex
 										py={2}
 										px={1}
 										justifyContent="center"
 										css={css`
-											border-top-width: 1px;
-											border-bottom-width: 1px;
-											white-space: nowrap;
+											border-width: 1px;
 										`}
 									>
 										*
@@ -134,6 +130,7 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 										fontWeight="normal"
 										minWidth={100}
 										textAlign="left"
+										zIndex={1}
 										title={Object.entries(SQL.FieldFlags)
 											.filter((e) => typeof e[1] === 'number')
 											// eslint-disable-next-line no-bitwise
@@ -144,6 +141,13 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 											border-left-width: 1px;
 											border-right-width: 1px;
 											white-space: nowrap;
+
+											${relevantTab &&
+											css`
+												:nth-child(2) {
+													border-left-width: 0;
+												}
+											`}
 										`}
 									>
 										<Flex
@@ -201,29 +205,32 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 								{relevantTab && (
 									<Box
 										as="td"
-										py={2}
-										px={1}
+										position="sticky"
+										left={0}
+										p={0}
 										tabIndex={0}
-										css={css`
-											position: sticky;
-											left: 0;
-											white-space: nowrap;
-											border-width: 1px;
-											border-top: 0;
-											border-bottom: 0;
-										`}
+										bg="bgGrey"
 									>
-										<TextButton
-											onClick={() =>
-												addTab({
-													type: relevantTab.type,
-													[relevantTab.key]: r[relevantTab.key].value,
-													values: mapValues(r, (v) => v.value),
-												})
-											}
+										<Box
+											py={2}
+											px={1}
+											css={css`
+												border-left-width: 1px;
+												border-right-width: 1px;
+											`}
 										>
-											<FaEdit />
-										</TextButton>
+											<IconButton
+												onClick={() =>
+													addTab({
+														type: relevantTab.type,
+														[relevantTab.key]: r[relevantTab.key].value,
+														values: mapValues(r, (v) => v.value),
+													})
+												}
+											>
+												<FaEdit />
+											</IconButton>
+										</Box>
 									</Box>
 								)}
 								{Object.values(r).map((c, ci) =>
@@ -242,9 +249,8 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 											tabIndex={0}
 											css={(theme) => css`
 												white-space: nowrap;
-												border-width: 1px;
-												border-top: 0;
-												border-bottom: 0;
+												border-left-width: 1px;
+												border-right-width: 1px;
 												${
 													c.status === 'modified' &&
 													css`
@@ -261,6 +267,15 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 													c.status === 'deleted' &&
 													css`
 														background-color: ${theme.colors.bgError};
+													`
+												}
+
+												${
+													relevantTab &&
+													css`
+														:nth-child(2) {
+															border-left-width: 0;
+														}
 													`
 												}
 											`}

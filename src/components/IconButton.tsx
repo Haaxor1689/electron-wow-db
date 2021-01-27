@@ -6,7 +6,6 @@ type Props = BoxProps;
 const IconButton = styled.button<Props>`
 	${ComposeBox()}
 	background: transparent;
-	color: ${(p) => p.theme.colors.text};
 
 	:hover {
 		color: ${(p) => p.theme.colors.textFocus};
@@ -14,6 +13,7 @@ const IconButton = styled.button<Props>`
 `;
 IconButton.defaultProps = {
 	type: 'button',
+	color: 'text',
 	p: 0,
 	fontSize: 'sm',
 };
