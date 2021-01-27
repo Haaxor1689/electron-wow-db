@@ -21,15 +21,16 @@ type Props = {
 			{ value: unknown; status?: 'modified' | 'deleted' | 'added' }
 		>
 	>;
+	allColumns?: boolean;
 	sorting?: SQL.OrderBy;
 	setSorting?: (sorting?: SQL.OrderBy) => void;
 };
 
-const Table: FC<Props> = ({ data, sorting, setSorting }) => {
+const Table: FC<Props> = ({ data, allColumns, sorting, setSorting }) => {
 	const [hiddenFields, setHiddenFields] = useState<Record<number, boolean>>({});
 
 	// Check if there is a TabType for current table
-	const relevantTab = useMemo(() => {
+	const tabMeta = useMemo(() => {
 		const tab = Object.entries(TabsMetadata).find(
 			(e) => e[1].table === data?.fields[0]?.table
 		);
@@ -50,34 +51,37 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 
 	return (
 		<Fragment>
-			<Box as="details" mb={2} mx={2}>
-				<Box as="summary" mb={2}>
-					Columns
+			{!allColumns && (
+				<Box as="details" mb={2} mx={2}>
+					<Box as="summary" mb={2}>
+						Columns
+					</Box>
+					<Flex
+						flexWrap="wrap"
+						css={(theme) =>
+							css`
+								gap: ${theme.space[2]}px;
+							`
+						}
+					>
+						{data.fields.map((k, i) => (
+							<Chip
+								key={i}
+								active={!hiddenFields[i]}
+								onClick={() =>
+									setHiddenFields((hf) => ({
+										...hf,
+										[i]: !hiddenFields[i],
+									}))
+								}
+							>
+								{k.name}
+							</Chip>
+						))}
+					</Flex>
 				</Box>
-				<Flex
-					flexWrap="wrap"
-					css={(theme) =>
-						css`
-							gap: ${theme.space[2]}px;
-						`
-					}
-				>
-					{data.fields.map((k, i) => (
-						<Chip
-							key={i}
-							active={!hiddenFields[i]}
-							onClick={() =>
-								setHiddenFields((hf) => ({
-									...hf,
-									[i]: !hiddenFields[i],
-								}))
-							}
-						>
-							{k.name}
-						</Chip>
-					))}
-				</Flex>
-			</Box>
+			)}
+
 			<Box
 				flexGrow={1}
 				css={css`
@@ -94,7 +98,7 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 				>
 					<thead>
 						<tr>
-							{relevantTab && (
+							{tabMeta && (
 								<Box
 									as="th"
 									position="sticky"
@@ -142,7 +146,7 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 											border-right-width: 1px;
 											white-space: nowrap;
 
-											${relevantTab &&
+											${tabMeta &&
 											css`
 												:nth-child(2) {
 													border-left-width: 0;
@@ -202,7 +206,7 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 									}
 								`}
 							>
-								{relevantTab && (
+								{tabMeta && (
 									<Box
 										as="td"
 										position="sticky"
@@ -222,9 +226,8 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 											<IconButton
 												onClick={() =>
 													addTab({
-														type: relevantTab.type,
-														[relevantTab.key]: r[relevantTab.key].value,
-														values: mapValues(r, (v) => v.value),
+														type: tabMeta.type,
+														[tabMeta.key]: r[tabMeta.key].value,
 													})
 												}
 											>
@@ -271,7 +274,7 @@ const Table: FC<Props> = ({ data, sorting, setSorting }) => {
 												}
 
 												${
-													relevantTab &&
+													tabMeta &&
 													css`
 														:nth-child(2) {
 															border-left-width: 0;

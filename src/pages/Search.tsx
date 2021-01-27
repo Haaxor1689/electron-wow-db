@@ -66,21 +66,30 @@ const Search: FC = () => {
 			>
 				<Form>
 					<Flex flexDirection="column" alignItems="center" mb={4}>
-						<Flex fontSize="lg" alignItems="center">
-							<TextInput variant="lg" name="name" width={500} />
+						<Flex>
+							<TextInput
+								variant="lg"
+								name="name"
+								placeholder="Quick search..."
+								width={500}
+							/>
+							<Button
+								type="submit"
+								variant="primary"
+								css={css`
+									border-top-left-radius: 0;
+									border-bottom-left-radius: 0;
+								`}
+							>
+								Search
+							</Button>
 						</Flex>
-						<Button type="submit" my="3" variant="primary">
-							Search
-						</Button>
 					</Flex>
 				</Form>
 			</Formik>
 			<Flex
-				px={1}
-				mb={3}
 				css={css`
 					gap: 1px;
-					border-bottom-width: 1px;
 				`}
 			>
 				{SearchTabs.map((t) => (
@@ -89,7 +98,7 @@ const Search: FC = () => {
 					</TabButton>
 				))}
 			</Flex>
-			<Table data={data} />
+			<Table data={data} allColumns />
 		</Fragment>
 	);
 };
