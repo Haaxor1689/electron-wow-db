@@ -8,34 +8,23 @@ import { Box, Flex } from '../../components/Styled';
 import Text from '../../components/Text';
 import { useSelectQuery } from '../../hooks/useSqlQuery';
 import { useTab } from '../../hooks/useTab';
-import { CreatureTabState, TabsMetadata } from '../../utils/tabs';
+import { ItemTabState, TabsMetadata } from '../../utils/tabs';
 import TextInput from '../../components/form/TextInput';
 import formToSql from '../../utils/formToSql';
 import AutoFormUpdate from '../../components/form/AutoFormUpdate';
 import Button from '../../components/Button';
 import {
-	CreatureTemplate,
-	InitialCreatureTemplate,
-	NPCFlags,
-} from '../../utils/tables/creature_template';
-import TableSelectInput from '../../components/form/TableSelectInput';
-import FlagsInput from '../../components/form/FlagsInput';
-import {
-	mapNamedFactionTemplateToRows,
-	NamedFactionTemplate,
-	SelectNamedFactionTemplate,
-} from '../../utils/tables/faction_template';
-import InputTabs from '../../components/form/InputTabs';
+	InitialItemTemplate,
+	ItemTemplate,
+} from '../../utils/tables/item_template';
 
-type K = keyof CreatureTemplate;
+type K = keyof ItemTemplate;
 
-const CreatureTab: FC<{ id: string }> = ({ id }) => {
-	const [{ entry, values }, { update }] = useTab<CreatureTabState>(id);
+const ItemTab: FC<{ id: string }> = ({ id }) => {
+	const [{ entry, values }, { update }] = useTab<ItemTabState>(id);
 
-	const response = useSelectQuery<CreatureTemplate>(
-		entry
-			? `SELECT * FROM \`creature_template\` WHERE \`entry\` = ${entry}`
-			: ''
+	const response = useSelectQuery<ItemTemplate>(
+		entry ? `SELECT * FROM \`item_template\` WHERE \`entry\` = ${entry}` : ''
 	);
 
 	// Update tab name
@@ -45,13 +34,13 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 				name:
 					response.data?.result?.[0]?.name ??
 					// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-					(values?.name || 'New Creature Tab'),
+					(values?.name || 'New Item Tab'),
 			}),
 		[update, response.data, values?.name]
 	);
 
 	const initialValues = useMemo(
-		() => response.data?.result?.[0] ?? InitialCreatureTemplate(),
+		() => response.data?.result?.[0] ?? InitialItemTemplate(),
 		[response.data]
 	);
 
@@ -100,49 +89,6 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 						</Flex>
 					</Flex>
 					<TextInput<K> name="name" label="Name" fontSize="xl" mb={3} />
-					<TextInput<K> name="subname" label="Subname" fontSize="lg" mb={3} />
-
-					<InputTabs count={4} title="Display">
-						{(i) => (
-							<TextInput type="number" name={`display_id${i}`} label="Id" />
-						)}
-					</InputTabs>
-
-					<Flex flexDirection="column">
-						<Text as="label">Level</Text>
-						<Flex>
-							<TextInput<K> type="number" name="level_min" />
-							<Box mx={2}>-</Box>
-							<TextInput<K> type="number" name="level_max" />
-						</Flex>
-					</Flex>
-
-					<Flex flexDirection="column">
-						<Text as="label">Health</Text>
-						<Flex>
-							<TextInput<K> type="number" name="health_min" />
-							<Box mx={2}>-</Box>
-							<TextInput<K> type="number" name="health_max" />
-						</Flex>
-					</Flex>
-
-					<Flex flexDirection="column">
-						<Text as="label">Mana</Text>
-						<Flex>
-							<TextInput<K> type="number" name="mana_min" />
-							<Box mx={2}>-</Box>
-							<TextInput<K> type="number" name="mana_max" />
-						</Flex>
-					</Flex>
-
-					<TableSelectInput<K, NamedFactionTemplate>
-						name="faction"
-						label="Faction"
-						query={SelectNamedFactionTemplate}
-						mapRows={mapNamedFactionTemplateToRows}
-					/>
-
-					<FlagsInput<K> name="npc_flags" label="Flags" flags={NPCFlags} />
 
 					<Button type="submit" mt={4} variant="primary">
 						Submit
@@ -163,7 +109,7 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 					</Text>
 					<SyntaxHighlighter language="sql" style={vs2015}>
 						{formToSql(
-							TabsMetadata.Creature as never,
+							TabsMetadata.Item as never,
 							values ?? {},
 							initialValues
 						) || '-- No changes'}
@@ -174,4 +120,4 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 	);
 };
 
-export default CreatureTab;
+export default ItemTab;

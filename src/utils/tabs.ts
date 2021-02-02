@@ -1,8 +1,9 @@
 import { v4 as uuid } from 'uuid';
 import { SQL } from '../typings';
 import { CreatureTemplate } from './tables/creature_template';
+import { ItemTemplate } from './tables/item_template';
 
-export const TabTypes = ['Query', 'Dbc', 'Creature'] as const;
+export const TabTypes = ['Query', 'Dbc', 'Creature', 'Item'] as const;
 export type TabTypeVariant = typeof TabTypes[number];
 
 type TabBase<T extends TabTypeVariant> = {
@@ -59,7 +60,23 @@ const InitialCreatureTab = (
 	...initial,
 });
 
-export type TabState = QueryTabState | DbcTabState | CreatureTabState;
+export type ItemTabState = TabBase<'Item'> & {
+	entry?: number;
+	values?: Partial<ItemTemplate>;
+};
+
+const InitialItemTab = (initial: Partial<ItemTabState> = {}): ItemTabState => ({
+	id: uuid(),
+	type: 'Item',
+	name: 'New Item Tab',
+	...initial,
+});
+
+export type TabState =
+	| QueryTabState
+	| DbcTabState
+	| CreatureTabState
+	| ItemTabState;
 
 export type TabMetaType = {
 	table?: string;
@@ -78,5 +95,10 @@ export const TabsMetadata: Record<TabTypeVariant, TabMetaType> = {
 		table: 'creature_template',
 		key: 'entry',
 		initialData: InitialCreatureTab as never,
+	},
+	Item: {
+		table: 'item_template',
+		key: 'entry',
+		initialData: InitialItemTab as never,
 	},
 };
