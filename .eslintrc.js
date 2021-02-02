@@ -25,6 +25,7 @@ module.exports = {
 		'react/jsx-props-no-spreading': 'off',
 		'react/jsx-fragments': 'off',
 		'react/require-default-props': 'off',
+		'no-bitwise': 'off',
 	},
 	plugins: ['@typescript-eslint', 'react', 'react-hooks'],
 	settings: {

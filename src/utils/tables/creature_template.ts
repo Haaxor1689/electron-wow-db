@@ -154,3 +154,23 @@ export const InitialCreatureTemplate = (): Omit<CreatureTemplate, 'entry'> => ({
 	flags_extra: 0,
 	script_name: '',
 });
+
+export enum NPCFlags {
+	NONE = 0x00000000,
+	GOSSIP = 0x00000001, // 100%
+	QUESTGIVER = 0x00000002, // 100%
+	VENDOR = 0x00000004, // 100%
+	FLIGHTMASTER = 0x00000008, // 100%
+	TRAINER = 0x00000010, // 100%
+	SPIRITHEALER = 0x00000020, // guessed
+	SPIRITGUIDE = 0x00000040, // guessed
+	INNKEEPER = 0x00000080, // 100%
+	BANKER = 0x00000100, // 100%
+	PETITIONER = 0x00000200, // 100% 0xC0000 = guild petitions
+	TABARDDESIGNER = 0x00000400, // 100%
+	BATTLEMASTER = 0x00000800, // 100%
+	AUCTIONEER = 0x00001000, // 100%
+	STABLEMASTER = 0x00002000, // 100%
+	REPAIR = 0x00004000, // 100%
+	OUTDOORPVP = 0x20000000, // custom flag for outdoor pvp creatures || Custom flag
+}

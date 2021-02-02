@@ -17,11 +17,15 @@ import Button from '../../components/Button';
 import {
 	CreatureTemplate,
 	InitialCreatureTemplate,
+	NPCFlags,
 } from '../../utils/tables/creature_template';
 import TableSelectInput from '../../components/form/TableSelectInput';
-import { Faction, mapFactionRows } from '../../utils/tables/faction';
-
-// TODO: Add check that display probabilities add up to total probability
+import FlagsInput from '../../components/form/FlagsInput';
+import {
+	mapNamedFactionTemplateToRows,
+	NamedFactionTemplate,
+	SelectNamedFactionTemplate,
+} from '../../utils/tables/faction_template';
 
 type K = keyof CreatureTemplate;
 
@@ -162,12 +166,14 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 						</Flex>
 					</Flex>
 
-					<TableSelectInput<K, Faction>
+					<TableSelectInput<K, NamedFactionTemplate>
 						name="faction"
 						label="Faction"
-						table="faction"
-						mapRows={mapFactionRows}
+						query={SelectNamedFactionTemplate}
+						mapRows={mapNamedFactionTemplateToRows}
 					/>
+
+					<FlagsInput<K> name="npc_flags" label="Flags" flags={NPCFlags} />
 
 					<Button type="submit" mt={4} variant="primary">
 						Submit

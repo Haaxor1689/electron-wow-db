@@ -137,7 +137,6 @@ const Table: FC<Props> = ({ data, allColumns, sorting, setSorting }) => {
 										zIndex={1}
 										title={Object.entries(SQL.FieldFlags)
 											.filter((e) => typeof e[1] === 'number')
-											// eslint-disable-next-line no-bitwise
 											.filter((e) => k.flags & (e[1] as never))
 											.map((e) => e[0])
 											.join(', ')}

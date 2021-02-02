@@ -4,19 +4,20 @@ import { InputProps, SelectOption } from '../../typings';
 import SelectInput from './SelectInput';
 
 type Props<Key extends string, Row extends Record<string, unknown>> = {
-	table: string;
 	mapRows: (row: Row) => SelectOption;
-} & InputProps<Key, HTMLSelectElement>;
+} & InputProps<Key, HTMLSelectElement> &
+	({ query: string; table?: never } | { table: string; query?: never });
 
 const TableSelectInput = <
 	Key extends string,
 	Row extends Record<string, unknown>
 >({
 	table,
+	query,
 	mapRows,
 	...props
 }: Props<Key, Row>) => {
-	const response = useSelectQuery<Row>(`SELECT * FROM \`${table}\``);
+	const response = useSelectQuery<Row>(query ?? `SELECT * FROM \`${table}\``);
 	const options = useMemo(
 		() =>
 			response.data?.result
