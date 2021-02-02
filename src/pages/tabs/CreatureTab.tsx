@@ -26,6 +26,7 @@ import {
 	NamedFactionTemplate,
 	SelectNamedFactionTemplate,
 } from '../../utils/tables/faction_template';
+import InputTabs from '../../components/form/InputTabs';
 
 type K = keyof CreatureTemplate;
 
@@ -54,9 +55,6 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 		() => response.data?.result?.[0] ?? InitialCreatureTemplate(),
 		[response.data]
 	);
-
-	// Display tabs
-	const [displayTab, setDisplayTab] = useState(1);
 
 	if (response.isLoading) {
 		return (
@@ -105,39 +103,11 @@ const CreatureTab: FC<{ id: string }> = ({ id }) => {
 					<TextInput<K> name="name" label="Name" fontSize="xl" mb={3} />
 					<TextInput<K> name="subname" label="Subname" fontSize="lg" mb={3} />
 
-					<Flex flexDirection="column" my={3}>
-						<Flex
-							css={css`
-								gap: 1px;
-							`}
-						>
-							<Text fontSize="lg">Display</Text>
-							<Box flexGrow={1} />
-							{[1, 2, 3, 4].map((t) => (
-								<TabButton
-									key={t}
-									active={displayTab === t}
-									onClick={() => setDisplayTab(t)}
-								>
-									{t}
-								</TabButton>
-							))}
-						</Flex>
-						<Flex
-							p={3}
-							mb={2}
-							css={(theme) => css`
-								border-width: 1px;
-								gap: ${theme.space[2]}px;
-							`}
-						>
-							<TextInput
-								type="number"
-								name={`display_id${displayTab}`}
-								label="Id"
-							/>
-						</Flex>
-					</Flex>
+					<InputTabs count={4} title="Display">
+						{(i) => (
+							<TextInput type="number" name={`display_id${i}`} label="Id" />
+						)}
+					</InputTabs>
 
 					<Flex flexDirection="column">
 						<Text as="label">Level</Text>
